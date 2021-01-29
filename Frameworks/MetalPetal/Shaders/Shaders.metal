@@ -501,7 +501,8 @@ namespace metalpetal {
                                     sampler sourceSampler [[sampler(0)]],
                                     constant float & scale [[ buffer(0) ]],
                                     constant float & radius [[ buffer(1) ]],
-                                    constant float2 & center [[ buffer(2) ]]) {
+                                    constant float2 & center [[ buffer(2) ]],
+                                    constant float & angle [[ buffer(3) ]]) {
         float2 textureSize = float2(sourceTexture.get_width(), sourceTexture.get_height());
         float2 textureCoordinate = vertexIn.textureCoordinate;
         
@@ -510,12 +511,20 @@ namespace metalpetal {
         
         if (dist < radius) {
             texturePixelCoordinate -= center;
-            float percent = 1.0 - ((radius - dist) / radius) * scale;
-            percent = percent * percent;
+            float cr = cos(angle);
+            float sr = sin(angle);
+            float2x2 rotm = float2x2(float2(cr,-sr),float2(sr,cr));
             
-            texturePixelCoordinate = texturePixelCoordinate * percent;
+            texturePixelCoordinate = rotm * texturePixelCoordinate;
+            
+            float r = sqrt(radius * radius - texturePixelCoordinate.x * texturePixelCoordinate.x);
+            float d = abs(texturePixelCoordinate.y);
+            float percent = 1.0 - ((r - d) / r) * scale;
+            texturePixelCoordinate.y *= percent;
+            
+            texturePixelCoordinate = texturePixelCoordinate * rotm;
+            
             texturePixelCoordinate += center;
-            
             textureCoordinate = texturePixelCoordinate / textureSize;
         }
         

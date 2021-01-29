@@ -23,6 +23,10 @@ __attribute__((objc_subclassing_restricted))
 
 @property (nonatomic) float scale;
 
+@property (nonatomic) float angle;
+
+
+
 
 @end
 

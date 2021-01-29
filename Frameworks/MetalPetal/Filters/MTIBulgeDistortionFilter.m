@@ -18,7 +18,8 @@
 - (NSDictionary<NSString *,id> *)parameters {
     return @{@"center": [MTIVector vectorWithFloat2:_center],
              @"radius": @(_radius),
-             @"scale": @(_scale)};
+             @"scale": @(_scale),
+         	 @"angle": @(_angle)};
 }
 
 + (MTIAlphaTypeHandlingRule *)alphaTypeHandlingRule {
